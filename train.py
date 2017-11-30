@@ -25,8 +25,8 @@ def train(model, optimizer, MiniBatchLoader, mean_loss, ac, IoU):
     model.train = True
     MiniBatchLoader.train = True
     for X, y in tqdm(MiniBatchLoader):
-        x = chainer.Variable(xp.asarray(X, dtype=xp.float32), volatile='off')
-        t = chainer.Variable(xp.asarray(y.astype(np.int32), dtype=xp.int32), volatile='off')
+        x = chainer.Variable(xp.asarray(X, dtype=xp.float32))
+        t = chainer.Variable(xp.asarray(y.astype(np.int32), dtype=xp.int32))
         # optimizer.weight_decay(0.0001)
         optimizer.update(model, x, t)
         sum_loss += float(model.loss.data) * len(t.data)
@@ -44,8 +44,8 @@ def test(model, MiniBatchLoader, mean_loss, ac, IoU):
     model.train = False
     MiniBatchLoader.train = False
     for X, y in tqdm(MiniBatchLoader):
-        x = chainer.Variable(xp.asarray(X, dtype=xp.float32), volatile='on')
-        t = chainer.Variable(xp.asarray(y.astype(np.int32), dtype=xp.int32), volatile='on')
+        x = chainer.Variable(xp.asarray(X, dtype=xp.float32))
+        t = chainer.Variable(xp.asarray(y.astype(np.int32), dtype=xp.int32))
         loss = model(x, t)
         sum_loss += float(loss.data) * len(t.data)
         sum_accuracy += float(model.accuracy.data) * len(t.data)
@@ -122,7 +122,7 @@ if __name__ == "__main__":
                               test_mean_loss, test_ac, test_IoU, 
                               epoch, LOG_FILENAME=resultdir + 'log.txt')
             debugger.plot_result(train_mean_loss, test_mean_loss, savename=resultdir + 'log.png')
-        if args.saveflag == 'on' and epoch % 10 == 0:
+        if args.saveflag == 'on' and epoch % 1 == 0:
             from chainer import serializers
             serializers.save_hdf5(resultdir + 'humanpartsnet_epoch' + str(epoch) + '.model', model)
             serializers.save_hdf5(resultdir + 'humanpartsnet_epoch' + str(epoch) + '.state', optimizer)
