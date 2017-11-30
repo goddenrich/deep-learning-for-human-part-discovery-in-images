@@ -3,7 +3,7 @@ import chainer.links as L
 import chainer.functions as F
 from chainer import serializers
 from chainer import cuda
-import cPickle as pickle
+import pickle
 import numpy as np
 import os
 import six
@@ -50,10 +50,10 @@ class HumanPartsNet(chainer.Chain):
             conv5_2=L.Convolution2D(512, 512, 3, stride=1, pad=1, initialW=self.wb["conv5_2_W"], initial_bias=self.wb["conv5_2_b"]),
             conv5_3=L.Convolution2D(512, 512, 3, stride=1, pad=1, initialW=self.wb["conv5_3_W"], initial_bias=self.wb["conv5_3_b"]),
  
-            upsample_pool1=L.Convolution2D(64, self.n_class, ksize=1, stride=1, pad=0, wscale=0.01),
-            upsample_pool2=L.Convolution2D(128, self.n_class, ksize=1, stride=1, pad=0, wscale=0.01),
-            upsample_pool3=L.Convolution2D(256, self.n_class, ksize=1, stride=1, pad=0, wscale=0.01),
-            upsample_pool4=L.Convolution2D(512, self.n_class, ksize=1, stride=1, pad=0, wscale=0.01),
+            upsample_pool1=L.Convolution2D(64, self.n_class, ksize=1, stride=1, pad=0), #TODO add wscale alternative
+            upsample_pool2=L.Convolution2D(128, self.n_class, ksize=1, stride=1, pad=0),
+            upsample_pool3=L.Convolution2D(256, self.n_class, ksize=1, stride=1, pad=0),
+            upsample_pool4=L.Convolution2D(512, self.n_class, ksize=1, stride=1, pad=0),
 
             fc6_conv=L.Convolution2D(512, 4096, 7, stride=1, pad=0, initialW=self.wb["fc6_W"], initial_bias=self.wb["fc6_b"]),
             fc7_conv=L.Convolution2D(4096, 4096, 1, stride=1, pad=0, initialW=self.wb["fc7_W"], initial_bias=self.wb["fc7_b"]),
@@ -209,7 +209,7 @@ class HumanPartsNet(chainer.Chain):
 
 
 def load_VGGmodel():
-    print "loading VGG model..."
+    print("loading VGG model...")
     if not os.path.exists(modelname):
         download()
     with open(modelname, 'rb') as d_pickle:
@@ -218,7 +218,7 @@ def load_VGGmodel():
 
 
 def download():
-    print "Downloading pre-trained VGG16 model..."
+    print("Downloading pre-trained VGG16 model...")
     import wget
     wget.download(url)
 
