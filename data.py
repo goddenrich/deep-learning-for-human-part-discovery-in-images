@@ -121,22 +121,25 @@ class MiniBatchLoader(object):
                 return minibatch_X, minibatch_y
 
     def scan_for_human(self):
-        print 'scanning all images for human part labels ... '
+        print('scanning all images for human part labels ... ')
         all_y_list = self.train_y_file_list + self.test_y_file_list
         all_y_array = np.array([self.make_mask(f) for f in tqdm(all_y_list)])
         self.human_y_list = [all_y_list[i] for i, mat in enumerate(all_y_array) if np.any(mat > 0)]
         self.train_X_file_list, self.train_y_file_list, self.test_X_file_list, self.test_y_file_list = self.split_train_test(self.X_dir, self.y_dir, 0.9, self.human_y_list)
-        print 'found %d images' % len(self.human_y_list)
+        print('found %d images' % len(self.human_y_list))
         return len(self.human_y_list)
 
     # apply for minibatch
     def load_batch(self, minibatch_path_X, minibatch_path_y):
-        minibatch_X = self.load_X(minibatch_path_X)
+        minibatch_X = self.load_X(minibatch_path_X, bw = True)
         minibatch_y = self.load_y(minibatch_path_y)
         return minibatch_X, minibatch_y
 
-    def load_X(self, minibatch_path):
-        return np.array([cv2.resize(cv2.imread(f), (self.insize, self.insize)) for f in minibatch_path])
+    def load_X(self, minibatch_path, bw = False):
+        if bw:
+            return np.array([np.transpose(np.tile(cv2.resize(cv2.cvtColor(cv2.imread(f), cv2.COLOR_RGB2GRAY), (self.insize, self.insize)),(3,1,1)),(1,2,0)) for f in minibatch_path])
+        else:
+            return np.array([cv2.resize(cv2.imread(f), (self.insize, self.insize)) for f in minibatch_path])
 
     def load_y(self, minibatch_path):
         return np.array([self.make_mask(f) for f in minibatch_path])
@@ -162,8 +165,8 @@ class MiniBatchLoader(object):
     def process_batch(self, minibatch_X, minibatch_y):
         if self.train:
             change_index = np.random.random((minibatch_X.shape[0], 4))
-            delta_hue = np.random.uniform(-18, 18, (minibatch_X.shape[0])).astype(np.int8)            # in opencv, hue is [0, 179]
-            processed_X = np.array([self.change_shape_3d(self.change_hue(minibatch_X[i, :, :, :], delta_hue[i]),
+            #delta_hue = np.random.uniform(-18, 18, (minibatch_X.shape[0])).astype(np.int8)            # in opencv, hue is [0, 179]
+            processed_X = np.array([self.change_shape_3d(minibatch_X[i, :, :, :],
                                                          change_index[i]) for i in range(len(minibatch_X))])
             processed_y = np.array([self.change_shape_2d(minibatch_y[i, :, :],
                                                          change_index[i]) for i in range(len(minibatch_y))])
