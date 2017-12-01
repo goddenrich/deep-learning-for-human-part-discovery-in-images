@@ -124,5 +124,6 @@ if __name__ == "__main__":
             debugger.plot_result(train_mean_loss, test_mean_loss, savename=resultdir + 'log.png')
         if args.saveflag == 'on' and epoch % 1 == 0:
             from chainer import serializers
+	    print('Epoch', epoch, ": saving...")
             serializers.save_hdf5(resultdir + 'humanpartsnet_epoch' + str(epoch) + '.model', model)
             serializers.save_hdf5(resultdir + 'humanpartsnet_epoch' + str(epoch) + '.state', optimizer)
