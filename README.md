@@ -1,4 +1,4 @@
-# Deep Learning for Human Part Discovery in Images - Chainer implementation
+# Deep Learning for Human Part Discovery in Images - Chainer implementation for passenger screening
 
 NOTE: This is not official implementation. Original paper is [Deep Learning for Human Part Discovery in Images](http://lmb.informatik.uni-freiburg.de/Publications/2016/OB16a/oliveira16icra.pdf).
 
@@ -76,3 +76,7 @@ MIT LICENSE.
 ## Contributors
 
 - [bobye](https://github.com/bobye)
+
+## Edited for black and white passenger screening
+
+- [goddenrich](https://github.com/goddenrich)
